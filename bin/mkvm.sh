@@ -1,13 +1,13 @@
 #/bin/bash
 
 function usage {
-	echo "$0: [-h] | --name VM_NAME --user USERNAME [--mac MAC_ADDRESS] [--cpu #_CPU]"
+	echo "$0: [-h] | --name VM_NAME --user USERNAME [--mac MAC_ADDRESS] [--cpu #_CPU] [--vmhosts CUSTOM_HOSTS_FILE]"
 	exit
 }
 
 function generate_iso {
 	# Parameters: $1 VM name, $2 vm owner
-	if [[ $# -ne 2 ]]; then
+	if [[ $# -ne 3 ]]; then
 		echo ""
 		echo "ERROR: generate_iso wrong number of parameters ($#): $@"
 		echo ""
@@ -15,6 +15,10 @@ function generate_iso {
 	fi
 	VM_NAME=$1
 	VM_OWNER=$2
+	VM_HOSTS=$3
+	if [[ -z "${VM_HOSTS}" ]]; then
+		VM_HOSTS="vm_hosts"
+	fi
 	THE_DIR=$(dirname $0)
 
 	if [[ ${USER} != "root" ]]; then
@@ -35,7 +39,7 @@ function generate_iso {
 	cp -f $THE_DIR/../unattended_iso_customization/daemon.json /opt/ubuntuiso/daemon.json
 	sed -r -i 's@your_local_insecure_registry@192\.168\.1\.101:5000@' /opt/ubuntuiso/daemon.json
 	# Copy hosts file customization
-	cp -f $THE_DIR/../unattended_iso_customization/vm_hosts /opt/ubuntuiso/vm_hosts
+	cp -f $THE_DIR/../unattended_iso_customization/$VM_HOSTS /opt/ubuntuiso/vm_hosts
 	# Copy sudoers
 	cp -f $THE_DIR/../unattended_iso_customization/k8s /opt/ubuntuiso/k8s
 
@@ -118,6 +122,11 @@ do
 		shift # past argument
 		shift # past value
 		;;
+		--vmhosts)
+		VM_HOSTS="$2"
+		shift # past argument
+		shift # past value
+		;;
 		-h)
 		usage
 		;;
@@ -145,9 +154,13 @@ if [[ -z "${VM_CPU// }" ]]; then
 	VM_CPU=""
 fi
 
+if [[ -z "${VM_HOSTS// }" ]]; then
+	VM_HOSTS=""
+fi
+
 
 if [[ ${USER} == "root" ]]; then
-	generate_iso $VM_NAME $VM_OWNER
+	generate_iso $VM_NAME $VM_OWNER $VM_HOSTS
 	sudo -u $VM_OWNER /bin/bash $0 --name $VM_NAME --user $VM_OWNER --mac $MAC_ADDRESS --cpu $VM_CPU
 else
 	create_vm $VM_NAME $VM_OWNER $VM_CPU $MAC_ADDRESS

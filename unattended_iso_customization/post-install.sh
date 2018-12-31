@@ -12,7 +12,7 @@ sudo sed -i "s/$hostn/$new_hostname/g" /etc/hostname
 ############ Ad universe repo  ############
 ###########################################
 sudo apt-get update
-sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common netcat wget -y
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository universe
 sudo apt-get update
@@ -46,7 +46,7 @@ sudo apt-get update
 ###########################################
 ########## Customize sudoers  #############
 ###########################################
-sudo cp -f /tmp/k8s /etc/sudoers.d/k8s
+sudo cp -f /tmp/ubuntu /etc/sudoers.d/ubuntu
 ###########################################
 ########## Install NFS client  ############
 ###########################################
