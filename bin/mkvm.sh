@@ -1,7 +1,7 @@
 #/bin/bash
 
 function usage {
-	echo "$0: [-h] | --name VM_NAME --user USERNAME [--mac MAC_ADDRESS] [--cpu #_CPU] [--vmhosts CUSTOM_HOSTS_FILE]"
+	echo "$0: [-h] | --name VM_NAME --user USERNAME [--mac MAC_ADDRESS] [--cpu #_CPU] [--vmhosts CUSTOM_HOSTS_FILE] [--memory MEMORY_IN_MB]"
 	exit
 }
 
@@ -16,9 +16,6 @@ function generate_iso {
 	VM_NAME=$1
 	VM_OWNER=$2
 	VM_HOSTS=$3
-	if [[ -z "${VM_HOSTS}" ]]; then
-		VM_HOSTS="vm_hosts"
-	fi
 	THE_DIR=$(dirname $0)
 
 	if [[ ${USER} != "root" ]]; then
@@ -52,7 +49,7 @@ function generate_iso {
 
 function create_vm {
 	# Parameters: $1 VM name, $2 vm owner
-        if [[ $# -lt 2 ]]; then
+        if [[ $# -lt 3 ]]; then
                 echo ""
                 echo "ERROR: generate_iso wrong number of parameters ($#): $@"
                 echo ""
@@ -60,8 +57,9 @@ function create_vm {
         fi
         VM_NAME=$1
         VM_OWNER=$2
-	VM_CPU=${3:-3}
-	MAC_ADDRESS=$4
+	VM_MEMORY=${3}
+	VM_CPU=${4}
+	MAC_ADDRESS=$5
 
 	if [[ ! -f /home/$VM_OWNER/virtual_machines/my_iso/ubuntu-16.04.3-server-amd64-silent_$VM_NAME.iso ]]; then
 		echo ""
@@ -78,7 +76,7 @@ function create_vm {
 
 	vboxmanage createvm --name $VM_NAME --basefolder /home/$VM_OWNER/virtual_machines --register
 	vboxmanage modifyvm $VM_NAME --ostype Ubuntu_64
-	vboxmanage modifyvm $VM_NAME --memory 31744
+	vboxmanage modifyvm $VM_NAME --memory ${VM_MEMORY}
 	vboxmanage modifyvm $VM_NAME --acpi on
 	vboxmanage modifyvm $VM_NAME --ioapic on
 	vboxmanage modifyvm $VM_NAME --cpus ${VM_CPU}
@@ -127,6 +125,11 @@ do
 		shift # past argument
 		shift # past value
 		;;
+		--memory)
+		VM_MEMORY="$2"
+		shift # past argument
+		shift # past value
+		;;
 		-h)
 		usage
 		;;
@@ -151,11 +154,15 @@ if [[ -z "${MAC_ADDRESS// }" ]]; then
 fi
 
 if [[ -z "${VM_CPU// }" ]]; then
-	VM_CPU=""
+	VM_CPU="3"
 fi
 
 if [[ -z "${VM_HOSTS// }" ]]; then
-	VM_HOSTS=""
+	VM_HOSTS="vm_hosts"
+fi
+
+if [[ -z "${VM_MEMORY// }" ]]; then
+	VM_MEMORY="15360"
 fi
 
 
@@ -163,5 +170,5 @@ if [[ ${USER} == "root" ]]; then
 	generate_iso $VM_NAME $VM_OWNER $VM_HOSTS
 	sudo -u $VM_OWNER /bin/bash $0 --name $VM_NAME --user $VM_OWNER --mac $MAC_ADDRESS --cpu $VM_CPU
 else
-	create_vm $VM_NAME $VM_OWNER $VM_CPU $MAC_ADDRESS
+	create_vm $VM_NAME $VM_OWNER $VM_MEMORY $VM_CPU $MAC_ADDRESS
 fi
