@@ -58,6 +58,11 @@ sudo apt-get -y install python3-pip
 sudo pip3 install websocket-client
 sudo pip3 install kafka-python
 ###########################################
+############ Install Java 8  ##############
+###########################################
+sudo apt-get update
+sudo apt-get install -y default-jre
+###########################################
 ############# Turn off Swap  ##############
 ###########################################
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
