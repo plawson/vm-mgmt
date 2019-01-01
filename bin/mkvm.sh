@@ -38,7 +38,7 @@ function generate_iso {
 	# Copy hosts file customization
 	cp -f $THE_DIR/../unattended_iso_customization/$VM_HOSTS /opt/ubuntuiso/vm_hosts
 	# Copy sudoers
-	cp -f $THE_DIR/../unattended_iso_customization/k8s /opt/ubuntuiso/k8s
+	cp -f $THE_DIR/../unattended_iso_customization/ubuntu /opt/ubuntuiso/ubuntu_sudoer
 
 	# Generate iso
 	rm -f /home/$VM_OWNER/virtual_machines/my_iso/ubuntu-16.04.3-server-amd64-silent_$VM_NAME.iso
