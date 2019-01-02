@@ -69,5 +69,6 @@ sudo sed -i '/ swap / s/^/#/' /etc/fstab
 ###########################################
 ########## Customize /etc/host  ###########
 ###########################################
-# I'm using static IPs. If you don't, comment in the following line
-cat /tmp/vm_hosts | grep -v $new_hostname >>/etc/hosts
+# I'm using static IPs. If you don't, comment in the following lines
+sudo cat /tmp/vm_hosts >>/etc/hosts
+sudo sed -r -i 's@'$new_hostname'@myself@' /etc/hosts
