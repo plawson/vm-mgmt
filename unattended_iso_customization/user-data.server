@@ -1,0 +1,18 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu1
+    password: $6$duEHBYk5nN.Y..li$7tDiF5DiwfRdLma6tnoX6irgWufb.o1DWlBUgUT2M6vxYygA9i0afbrVqIgFqbxSPZuIMsFiJoFx0xH8.dNlc.
+    realname: Ubuntu
+    username: ubuntu
+  ssh:
+    allow-pwd: true
+    authorized-keys: []
+    install-server: true
+  packages:
+    - build-essential
+    - net-tools
+  late-commands:
+    - curtin in-target -t /target -- apt update -y
+    - curtin in-target -t /target -- apt upgrade -y
