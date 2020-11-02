@@ -2,7 +2,7 @@
 autoinstall:
   version: 1
   identity:
-    hostname: ubuntu1
+    hostname: the_host_name
     password: $6$duEHBYk5nN.Y..li$7tDiF5DiwfRdLma6tnoX6irgWufb.o1DWlBUgUT2M6vxYygA9i0afbrVqIgFqbxSPZuIMsFiJoFx0xH8.dNlc.
     realname: Ubuntu
     username: ubuntu
