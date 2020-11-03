@@ -1,7 +1,7 @@
 #/bin/bash
 
 function usage {
-	echo "$0: [-h] | --name VM_NAME --user USERNAME --type server_or_desktop --basefolder BASE_FOLDER [--mac MAC_ADDRESS] [--cpu #_CPU] [--memory MEMORY_IN_MB] [--disk STORAGE_IN_GB]"
+	echo "$0: [-h] | --name VM_NAME --user USERNAME --type server_or_desktop --basefolder BASE_FOLDER [--mac MAC_ADDRESS] [--cpu #_CPU] [--memory MEMORY_IN_MB] [--disk STORAGE_IN_MB]"
 	exit
 }
 
