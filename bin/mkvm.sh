@@ -43,8 +43,10 @@ function create_vm {
 
 	vboxmanage createvm --name $VM_NAME --basefolder "$BASE_FOLDER" --ostype Ubuntu_64 --register
 	vboxmanage modifyvm $VM_NAME --memory ${VM_MEMORY} --nic1 bridged --bridgeadapter1 enp5s0
+	SLEEP_TIME=300
 	if [[ "VM_TYPE" = "desktop" ]]; then
 		vboxmanage modifyvm $VM_NAME --vrde on --vrdeport 3389
+		SLEEP_TIME=1800
 	fi
 	if [[ ! -z "${MAC_ADDRESS}" ]]; then
 		vboxmanage modifyvm $VM_NAME --macaddress1 $MAC_ADDRESS
@@ -66,7 +68,7 @@ function create_vm {
 	# Comment the previousline and uncomment the below command when debugging your unattended iso install.
 	# Note that uncommenting the below line will display the X11 install UI. In that case set your $DISPLAY variable accordingly before running the script or the istall might hang.
 	#vboxmanage startvm $VM_NAME
-	sleep 1800
+	sleep $SLEEP_TIME
 	kill -15 $HTTP_SRV
 }
 
