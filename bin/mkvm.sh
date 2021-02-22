@@ -1,7 +1,7 @@
 #/bin/bash
 
 function usage {
-	echo "$0: [-h] | --name VM_NAME --user USERNAME --type server_or_desktop --basefolder BASE_FOLDER [--mac MAC_ADDRESS] [--cpu #_CPU] [--memory MEMORY_IN_MB] [--disk STORAGE_IN_MB]"
+	echo "$0: [-h] | --name VM_NAME --user USERNAME --salt SALT --password PASSWORD --type server_or_desktop --basefolder BASE_FOLDER [--mac MAC_ADDRESS] [--cpu #_CPU] [--memory MEMORY_IN_MB] [--disk STORAGE_IN_MB]"
 	exit
 }
 
@@ -13,14 +13,16 @@ function create_vm {
                 echo ""
                 exit
         fi
-        VM_NAME=$1
-        VM_OWNER=$2
-	VM_TYPE=$3
-	VM_BASE_FOLDER=$4
-	VM_MEMORY=$5
-	VM_CPU=$6
-	VM_DISK=$7
-	MAC_ADDRESS=$8
+        VM_NAME=$1; shift
+        VM_OWNER=$1; shift
+        VM_OWNER_PWD=$1; shift
+	VM_TYPE=$1; shift
+	VM_BASE_FOLDER=$1; shift
+	VM_MEMORY=$1; shift
+	VM_CPU=$1; shift
+	VM_DISK=$1; shift
+	VM_OWNER_SALT=$1; shift
+	MAC_ADDRESS=$1; shift
 	THE_DIR=$(dirname $0)
 
 	if [[ ${USER} != "$VM_OWNER" ]]; then
@@ -35,6 +37,8 @@ function create_vm {
 	mkdir -p "$WEB_FOLDER"
 	cp -f $THE_DIR/../unattended_iso_customization/user-data."$VM_TYPE" "$WEB_FOLDER"/user-data
 	sed -r -i 's@the_host_name@'${VM_NAME}'@' "$WEB_FOLDER"/user-data
+	THE_PASS=$(openssl passwd -6 -salt ${VM_OWNER_SALT} ${VM_OWNER_PWD})
+	sed -r -i 's@the_pass_word@'${THE_PASS}'@' "$WEB_FOLDER"/user-data
 	touch "$WEB_FOLDER"/meta-data
 
 	BASE_FOLDER="$VM_BASE_FOLDER"/virtualbox
@@ -61,6 +65,7 @@ function create_vm {
 	
 	cd "$BASE_WEB_FOLDER"
 	nohup python3 -m http.server 3003 2>&1 1>/dev/null &
+	#nohup python3 -m http.server 3003 2>&1 1>/home/plawson/http_${VM_NAME}.log &
 	HTTP_SRV=$!
 	echo $HTTP_SRV
 
@@ -68,6 +73,7 @@ function create_vm {
 	# Comment the previousline and uncomment the below command when debugging your unattended iso install.
 	# Note that uncommenting the below line will display the X11 install UI. In that case set your $DISPLAY variable accordingly before running the script or the istall might hang.
 	#vboxmanage startvm $VM_NAME
+	ps -ef | grep $HTTP_SRV | grep -v grep
 	sleep $SLEEP_TIME
 	kill -15 $HTTP_SRV
 }
@@ -84,6 +90,16 @@ do
 		;;
 	--user)
 		VM_OWNER="$2"
+		shift # past argument
+		shift # past value
+		;;
+	--password)
+		VM_OWNER_PWD="$2"
+		shift # past argument
+		shift # past value
+		;;
+	--salt)
+		VM_OWNER_SALT="$2"
 		shift # past argument
 		shift # past value
 		;;
@@ -136,6 +152,14 @@ if [[ -z "${VM_OWNER// }" ]]; then
 	usage
 fi
 
+if [[ -z "${VM_OWNER_SALT// }" ]]; then
+	usage
+fi
+
+if [[ -z "${VM_OWNER_PWD// }" ]]; then
+	VM_OWNER_PWD="ubuntu"
+fi
+
 if [[ -z "${VM_TYPE// }" ]]; then
 	usage
 fi
@@ -166,4 +190,4 @@ if [[ -z "${VM_DISK// }" ]]; then
 fi
 
 
-create_vm $VM_NAME $VM_OWNER $VM_TYPE $VM_BASE_FOLDER $VM_MEMORY $VM_CPU $VM_DISK $MAC_ADDRESS
+create_vm $VM_NAME $VM_OWNER $VM_OWNER_PWD $VM_TYPE $VM_BASE_FOLDER $VM_MEMORY $VM_CPU $VM_DISK $VM_OWNER_SALT $MAC_ADDRESS
