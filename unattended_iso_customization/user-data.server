@@ -7,12 +7,15 @@ autoinstall:
     realname: Ubuntu
     username: ubuntu
   ssh:
-    allow-pwd: true
-    authorized-keys: []
+    allow-pwd: false
+    authorized-keys: ["ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAg5PnDq/EqiAnf85DRjvCthxXlOxWXLExoIQUeAXU+nL+BLsUoWvWWVdgQTGm9rgb6gMUxLcJeMoEC4+potxNHrq5b+QhyHeRQUysYmufAEmC2qwOieJ/w0536InJk+Im+sW9YRAk7/EO+590j+wRd3lHyUF6T1UfM25+CTFbW1UuL0IHvlUN+FKUdQLyvdhFfAMatOY1wDkHgI2xqe1Enq20KClEirwBXEvozROrwFHyzB7EE2FgPWD8s4Ji7XHoeJFYfdqwV6zxXzderawP+AitZUMmU7LxttZBLPyIqsMh2W1TfzQV61R5WY2gt/2MV5e10eaaqP/ReoxrBLUs4w== rsa-key-20201030","ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDGpeU7+wSYKN24RqpUzr3qNw9dlTeSoEBOfyIxZS0J6r1UWgG7tILKuPIgQuBmN6x8WSJ4EiWIxFx/Cbl4DF5eN848ElPYi+nwmsry0g6alfFuGg7j+sQpHjwWCBHP7f5DUNmlhHfigZDTMMknk/OjYtNKVFM3bTl+MGHg8Rl350bLKrOeMs9Uo8gOkqtpnce+bzo5FAF17xcLAKqcHpJKgErCBLf7Hh2iZtxqJt9DH6SPxhfQjFABjaZl7C71EchPa418JUo+XYE1fItdSCdkJvMVIlH1RXvQNMEC8gxhdYcxengY9Hof5Ee8JGSPOePPQkXjSDQ6xPkyJNi+RubTSG5rirRLN3QmmXCKnCsBkgrYYEYyBAs7WZTPBNNPWiRAab6dnFt0iomkg+AfPmpx1mXgcBI8LgBQVxj7ccOc7qXY03hj1ddq+p3ToDJlOccFE1Jd1cCXlTiN/pannjeM8UzsdggMpZzIZG8YGEbITdcjjbvgmtwR6N9E4Vz2zak= plawson@macbook-pro-de-philippe-1.home","ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRgg8ZbfT2cmJqZHD9dArFWIB8juN1C7IlRErINj1Nw4Q6u8PES79572t9nw8ke9b2LecdyhsVeKsJHOxf0lmDd4Jt0C9Za5P/N0fPdugjqSBsZqyj+L6HZ5WaCOfJNqfNa7LKlwxkfqOc6Ej99NM0jJPBMAS3IrAvoVteXbW1vzyCsc8n6E7+RVX/VHLG+1W1HDc/xiaVclCyb92fwyzaoiLm0Bxti6PBlBe6XG+Qd1YTo5QFk6+awD+N+hrD0UlMBvGSV2Xk/DsaFGxDhGLWfi//EY5nZQVfHb7kPM+D++oqt4uNx6BM+Wj8QVuJ7BBI/N+O0e5TBtP600IlHEdR plawson@DESKTOP-EQI7VI4","ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDTQeh5qaZHcGd0zIYiH/Qkl7ICEQa/WsZFTkfNNsejouLhFyVLSfLJs/hQmZMtYzjfWcOoH97yrl015id/7D8uxHCvm5Y/gEZ0gp6mgNxds3166KkmQS7Ev6ICODQQMmEAh/oYO54DvggmnAPCKVc5A+nFJSUHiYJpW5gDD6MueN1GWXcHdgP/Xz+7t2tBiqJrTkc60m+issmDVlArjlCB5xLIaa9I3ZYKpuHxhPkTNDG3LIIflgBBhsY/Cy/XbStuOeehL0VMRXIYpWgOnt+HYJ6TVoGT/IiuZwJm6aFIqON0dSLohVihpO2oAeI3tAj2ZZFh4ARfFXEYzpVjkUcEqXv6lrK3k/r1b+HFjaxXDZWXfesQ/xomNUNYgaupwvvJjcajjoFTrxXx3nnEmh3wMg1SmjRdSdfx8LtJa9f+XitDJiETQHf1Bgj+X2QcIu8sIcENRIE+0wO0i9d6kN/6n62549E8ari6JsfBvTI30aunGeIcohGkJy1iY3eZ37s= plawson@litsrv01"]
     install-server: true
   packages:
     - build-essential
     - net-tools
+    - nfs-common
   late-commands:
+    - 'echo "mcs ALL=(ALL) NOPASSWD: ALL" > /target/etc/sudoers.d/ubuntu'
+    - chmod 440 /target/etc/sudoers.d/ubuntu
     - curtin in-target -t /target -- apt update -y
     - curtin in-target -t /target -- apt upgrade -y
