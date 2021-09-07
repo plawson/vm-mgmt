@@ -11,7 +11,7 @@ autoinstall:
       uri: http://ports.ubuntu.com/ubuntu-ports
   identity:
     hostname: ubuntu1
-    password: $6$duEHBYk5nN.Y..li$7tDiF5DiwfRdLma6tnoX6irgWufb.o1DWlBUgUT2M6vxYygA9i0afbrVqIgFqbxSPZuIMsFiJoFx0xH8.dNlc.
+    password: the_pass_word
     realname: Ubuntu
     username: ubuntu
   keyboard:
